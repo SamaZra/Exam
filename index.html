@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Зачёт по тригонометрии</title>
+    
+    <script>
+        MathJax = {
+            tex: { 
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                macros: {
+                    tg: "\\operatorname{tg}",
+                    ctg: "\\operatorname{ctg}"
+                }
+            },
+            chtml: { scale: 1.1 }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #f0f4f8;
+            color: #1a2a3f;
+            padding: 20px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            transition: filter 0.2s ease;
+        }
+
+        body.blurred { filter: blur(15px); }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1abc9c;
+        }
+        .header h1 { font-size: 1.8rem; color: #1a2a3f; margin-bottom: 8px; }
+        .header p { color: #5a7a94; font-size: 0.95rem; }
+
+        .timer-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e8f0fe;
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 5px solid #1abc9c;
+        }
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: #1abc9c;
+        }
+        .timer-display.danger { color: #ef4444; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        .btn-start {
+            background: #1abc9c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .btn-start:hover { background: #16a085; transform: scale(1.05); }
+        .btn-start:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+
+        .variants-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 8px 20px;
+            border: 2px solid #e2e8f0;
+            background: transparent;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #5a7a94;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #1a2a3f;
+            color: white;
+            border-color: #1a2a3f;
+        }
+        .tab-btn:hover:not(.active) {
+            border-color: #1abc9c;
+            color: #1abc9c;
+        }
+
+        .variant-content { display: none; }
+        .variant-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .task-item {
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #1abc9c;
+            page-break-inside: avoid;
+        }
+        .task-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .task-num {
+            font-weight: 700;
+            color: #1abc9c;
+            margin-right: 8px;
+        }
+
+        @media print { body { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainContainer">
+    <div class="header">
+        <h1>Зачёт по тригонометрии</h1>
+        <p>Темы: Основные тождества, формулы приведения, двойной угол, сложение углов, значения I четверти</p>
+    </div>
+
+    <div class="timer-box">
+        <div>
+            <div style="font-size: 0.85rem; color: #5a7a94; font-weight: 600;">Время на выполнение:</div>
+            <div class="timer-display" id="timer">30:00</div>
+        </div>
+        <button class="btn-start" id="startBtn" onclick="startTimer()">Начать зачёт</button>
+    </div>
+
+    <div class="variants-tabs">
+        <button class="tab-btn active" onclick="switchVariant(1)">Вариант 1</button>
+        <button class="tab-btn" onclick="switchVariant(2)">Вариант 2</button>
+        <button class="tab-btn" onclick="switchVariant(3)">Вариант 3</button>
+        <button class="tab-btn" onclick="switchVariant(4)">Вариант 4</button>
+        <button class="tab-btn" onclick="switchVariant(5)">Вариант 5</button>
+    </div>
+
+    <!-- ВАРИАНТ 1 -->
+    <div id="variant-1" class="variant-content active">
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">1.</span> <strong>Упростите выражение:</strong> \(\frac{\sin(\pi - \alpha) \cdot \cos(2\pi - \alpha)}{\tg(\pi + \alpha) \cdot \cos(\frac{\pi}{2} + \alpha)}\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">2.</span> <strong>Вычислите:</strong> \(\sin 75^\circ\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">3.</span> <strong>Докажите тождество:</strong> \(\frac{1 - \cos 2\alpha}{\sin 2\alpha} = \tg \alpha\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">4.</span> <strong>Найдите значения:</strong> \(\sin \alpha\) и \(\tg \alpha\), если \(\cos \alpha = \frac{3}{5}\) и \(\alpha \in (0; \frac{\pi}{2})\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">5.</span> <strong>Упростите выражение:</strong> \(\sin(\alpha+\beta) + \sin(\alpha-\beta)\)</div>
+        </div>
+    </div>
+
+    <!-- ВАРИАНТ 2 -->
+    <div id="variant-2" class="variant-content">
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">1.</span> <strong>Упростите выражение:</strong> \(\frac{\cos(\frac{\pi}{2} - \alpha) \cdot \tg(\pi - \alpha)}{\sin(\frac{3\pi}{2} + \alpha) \cdot \cos(-\alpha)}\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">2.</span> <strong>Вычислите:</strong> \(\cos 15^\circ\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">3.</span> <strong>Докажите тождество:</strong> \(\frac{2\tg \alpha}{1 + \tg^2 \alpha} = \sin 2\alpha\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">4.</span> <strong>Найдите значения:</strong> \(\cos \alpha\) и \(\tg \alpha\), если \(\sin \alpha = \frac{5}{13}\) и \(\alpha \in (0; \frac{\pi}{2})\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">5.</span> <strong>Упростите выражение:</strong> \(\cos(\alpha+\beta) - \cos(\alpha-\beta)\)</div>
+        </div>
+    </div>
+
+    <!-- ВАРИАНТ 3 -->
+    <div id="variant-3" class="variant-content">
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">1.</span> <strong>Упростите выражение:</strong> \(\frac{\sin(2\pi - \alpha) \cdot \tg(\frac{\pi}{2} + \alpha)}{\cos(\pi - \alpha) \cdot \sin(\frac{\pi}{2} - \alpha)}\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">2.</span> <strong>Вычислите:</strong> \(\sin 105^\circ\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">3.</span> <strong>Докажите тождество:</strong> \(\frac{\sin 2\alpha}{1 + \cos 2\alpha} = \tg \alpha\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">4.</span> <strong>Найдите значения:</strong> \(\sin \alpha\) и \(\cos \alpha\), если \(\tg \alpha = \frac{4}{3}\) и \(\alpha \in (0; \frac{\pi}{2})\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">5.</span> <strong>Упростите выражение:</strong> \(\frac{\sin \alpha + \sin 2\alpha}{1 + \cos \alpha + \cos 2\alpha}\)</div>
+        </div>
+    </div>
+
+    <!-- ВАРИАНТ 4 -->
+    <div id="variant-4" class="variant-content">
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">1.</span> <strong>Упростите выражение:</strong> \(\frac{\cos(\frac{3\pi}{2} - \alpha) \cdot \tg(\pi + \alpha)}{\sin(\pi - \alpha) \cdot \cos(2\pi + \alpha)}\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">2.</span> <strong>Вычислите:</strong> \(\cos 105^\circ\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">3.</span> <strong>Докажите тождество:</strong> \(\frac{1 + \sin 2\alpha}{(\sin \alpha + \cos \alpha)^2} = 1\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">4.</span> <strong>Найдите значения:</strong> \(\sin \alpha\) и \(\cos \alpha\), если \(\tg \alpha = 0.75\) и \(\alpha \in (0; \frac{\pi}{2})\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">5.</span> <strong>Упростите выражение:</strong> \(\sin^2(\frac{\pi}{4} + \alpha) - \sin^2(\frac{\pi}{4} - \alpha)\)</div>
+        </div>
+    </div>
+
+    <!-- ВАРИАНТ 5 -->
+    <div id="variant-5" class="variant-content">
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">1.</span> <strong>Упростите выражение:</strong> \(\frac{\tg(\frac{\pi}{2} - \alpha) \cdot \sin(\pi + \alpha)}{\cos(2\pi - \alpha) \cdot \tg(\pi - \alpha)}\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">2.</span> <strong>Вычислите:</strong> \(\sin 15^\circ\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">3.</span> <strong>Докажите тождество:</strong> \(\frac{\sin 4\alpha}{1 + \cos 4\alpha} = \tg 2\alpha\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">4.</span> <strong>Найдите значения:</strong> \(\cos \alpha\) и \(\sin \alpha\), если \(\tg \alpha = \frac{12}{5}\) и \(\alpha \in (0; \frac{\pi}{2})\)</div>
+        </div>
+        <div class="task-item">
+            <div class="task-text"><span class="task-num">5.</span> <strong>Упростите выражение:</strong> \(\cos(\frac{\pi}{3} + \alpha) + \cos(\frac{\pi}{3} - \alpha)\)</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // 1. ЛОГИКА ТАЙМЕРА
+    // ==========================================
+    let timeLeft = 30 * 60; // 30 минут в секундах
+    let timerInterval = null;
+    let isRunning = false;
+
+    function formatTime(seconds) {
+        let m = Math.floor(seconds / 60);
+        let s = seconds % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('startBtn').textContent = 'Зачёт идёт...';
+        
+        const timerEl = document.getElementById('timer');
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = formatTime(timeLeft);
+            
+            if (timeLeft <= 5 * 60) {
+                timerEl.classList.add('danger');
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerEl.textContent = "00:00";
+                document.getElementById('startBtn').textContent = 'Время вышло!';
+                document.body.style.pointerEvents = 'none';
+                alert('Время вышло! Зачёт завершён.');
+            }
+        }, 1000);
+    }
+
+    // ==========================================
+    // 2. ПЕРЕКЛЮЧЕНИЕ ВАРИАНТОВ
+    // ==========================================
+    function switchVariant(num) {
+        document.querySelectorAll('.variant-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById('variant-' + num).classList.add('active');
+        document.querySelectorAll('.tab-btn')[num - 1].classList.add('active');
+    }
+
+    // ==========================================
+    // 3. ЗАЩИТА ОТ КОПИРОВАНИЯ И СКРИНШОТОВ
+    // ==========================================
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        alert('Контекстное меню отключено!');
+    });
+
+    document.addEventListener('copy', function(e) { e.preventDefault(); });
+    document.addEventListener('cut', function(e) { e.preventDefault(); });
+    document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P' || e.key === 'C' || e.key === 'A' || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 80 || e.keyCode === 67 || e.keyCode === 65)) {
+            e.preventDefault();
+            return false;
+        }
+        if (e.key === 'PrintScreen' || e.keyCode === 44) {
+            e.preventDefault();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText('').then(() => {
+                    alert('Скриншоты запрещены! Буфер обмена очищен.');
+                });
+            } else {
+                alert('Скриншоты запрещены!');
+            }
+            return false;
+        }
+    });
+
+    window.addEventListener('blur', function() {
+        document.body.classList.add('blurred');
+    });
+    window.addEventListener('focus', function() {
+        document.body.classList.remove('blurred');
+    });
+</script>
+</body>
+</html>
