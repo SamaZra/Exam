@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Зачёт по уравнениям и неравенствам</title>
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                macros: {
+                    tg: "\\operatorname{tg}",
+                    ctg: "\\operatorname{ctg}"
+                }
+            },
+            chtml: { scale: 1.1 }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #f0f4f8;
+            color: #1a2a3f;
+            padding: 20px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            transition: filter 0.25s ease;
+        }
+        body.blurred .container { filter: blur(15px); }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1abc9c;
+        }
+        .header h1 { font-size: 1.8rem; color: #1a2a3f; margin-bottom: 8px; }
+        .header p { color: #5a7a94; font-size: 0.95rem; }
+
+        .timer-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e8f0fe;
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 5px solid #1abc9c;
+        }
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: #1abc9c;
+        }
+        .timer-display.danger { color: #ef4444; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .btn-start {
+            background: #1abc9c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+        .btn-start:hover { background: #16a085; transform: scale(1.05); }
+        .btn-start:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+
+        .variants-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 8px 20px;
+            border: 2px solid #e2e8f0;
+            background: transparent;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #5a7a94;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #1a2a3f;
+            color: white;
+            border-color: #1a2a3f;
+        }
+        .tab-btn:hover:not(.active) {
+            border-color: #1abc9c;
+            color: #1abc9c;
+        }
+        .tab-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.85;
+        }
+        .tab-btn:disabled:hover:not(.active) {
+            border-color: #e2e8f0;
+            color: #5a7a94;
+        }
+
+        .tasks-locked .variant-content,
+        .tasks-locked .extra-block {
+            display: none !important;
+        }
+
+        .lock-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+            margin-bottom: 24px;
+        }
+        .tasks-locked .lock-message {
+            display: block;
+        }
+        .lock-message .lock-icon { font-size: 3rem; margin-bottom: 12px; }
+        .lock-message p { color: #5a7a94; font-size: 1.05rem; line-height: 1.6; }
+        .lock-message .chosen-variant {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 18px;
+            background: #1abc9c;
+            color: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .variant-content { display: none; }
+        .variant-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .task-item {
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #1abc9c;
+            page-break-inside: avoid;
+        }
+        .task-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .task-num {
+            font-weight: 700;
+            color: #1abc9c;
+            margin-right: 8px;
+        }
+
+        .extra-block {
+            margin-top: 30px;
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #fffbeb;
+        }
+        .extra-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #fef3c7;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .extra-header:hover { background: #fde68a; }
+        .extra-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .extra-icon { font-size: 1.4rem; }
+        .extra-title {
+            font-weight: 700;
+            color: #92400e;
+            font-size: 1.05rem;
+        }
+        .extra-badge {
+            background: #f59e0b;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .extra-toggle {
+            font-size: 1.2rem;
+            color: #92400e;
+            transition: transform 0.3s ease;
+        }
+        .extra-block.open .extra-toggle {
+            transform: rotate(180deg);
+        }
+        .extra-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            padding: 0 20px;
+        }
+        .extra-block.open .extra-body {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .extra-body::-webkit-scrollbar { width: 8px; }
+        .extra-body::-webkit-scrollbar-track { background: #fef3c7; border-radius: 4px; }
+        .extra-body::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 4px; }
+        .extra-body::-webkit-scrollbar-thumb:hover { background: #d97706; }
+
+        .extra-hint {
+            font-size: 0.9rem;
+            color: #92400e;
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            background: #fef3c7;
+            border-radius: 10px;
+            border-left: 3px solid #f59e0b;
+        }
+        .extra-block .task-item {
+            border-left-color: #f59e0b;
+            background: #fffdf5;
+        }
+        .extra-block .task-num { color: #d97706; }
+
+        /* Оверлей "Время вышло" */
+        .time-over-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(26, 42, 63, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .time-over-overlay.show {
+            display: flex;
+            animation: overlayFadeIn 0.5s ease;
+        }
+        @keyframes overlayFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .time-over-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 56px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-top: 6px solid #ef4444;
+            max-width: 90vw;
+            animation: cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes cardPop {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .time-over-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .time-over-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .time-over-subtitle {
+            font-size: 1.05rem;
+            color: #5a7a94;
+            line-height: 1.6;
+        }
+
+        /* Экран "Зачёт завершён" */
+        #closedScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            background: #f0f4f8;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            pointer-events: auto;
+        }
+        #closedScreen.show { display: flex; }
+        .closed-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 48px 56px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border-top: 6px solid #1abc9c;
+            max-width: 90vw;
+        }
+        .closed-icon { font-size: 4rem; margin-bottom: 16px; }
+        .closed-title { font-size: 2rem; font-weight: 800; color: #1a2a3f; margin-bottom: 12px; }
+        .closed-text { font-size: 1.05rem; color: #5a7a94; line-height: 1.6; }
+        .closed-reset {
+            margin-top: 24px;
+            padding: 10px 22px;
+            background: #cbd5e1;
+            color: #475569;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .closed-reset:hover { background: #94a3b8; color: #fff; }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .container { padding: 18px; }
+            .header h1 { font-size: 1.4rem; }
+            .timer-box { flex-direction: column; gap: 10px; text-align: center; }
+            .time-over-card, .closed-card { padding: 28px 22px; }
+            .time-over-title { font-size: 1.8rem; }
+            .closed-title { font-size: 1.5rem; }
+        }
+
+        @media print { body { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="container tasks-locked" id="mainContainer">
+    <div id="examContent">
+        <div class="header">
+            <h1>Зачёт по уравнениям и неравенствам</h1>
+            <p>Темы: метод интервалов, замена переменной, разложение на множители, равносильные преобразования, ОДЗ</p>
+        </div>
+
+        <div class="timer-box">
+            <div>
+                <div style="font-size: 0.85rem; color: #5a7a94; font-weight: 600;">Время на выполнение:</div>
+                <div class="timer-display" id="timer">45:00</div>
+            </div>
+            <button class="btn-start" id="startBtn" onclick="startTimer()">Начать зачёт</button>
+        </div>
+
+        <div class="variants-tabs" id="variantsTabs">
+            <button class="tab-btn active" onclick="switchVariant(1)">Вариант 1</button>
+            <button class="tab-btn" onclick="switchVariant(2)">Вариант 2</button>
+            <button class="tab-btn" onclick="switchVariant(3)">Вариант 3</button>
+        </div>
+
+        <div class="lock-message" id="lockMessage">
+            <div class="lock-icon">🔒</div>
+            <p><strong>Задания скрыты.</strong><br>
+            Выберите вариант выше и нажмите «Начать зачёт», чтобы открыть задания и запустить таймер.</p>
+            <div class="chosen-variant" id="chosenVariant">Выбран: Вариант 1</div>
+        </div>
+
+        <!-- ВАРИАНТ 1 -->
+        <div id="variant-1" class="variant-content active">
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">1.</span> <strong>Решите неравенство методом интервалов:</strong> \(\frac{x^2 - 9}{x - 2} \le 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">2.</span> <strong>Решите уравнение заменой переменной:</strong> \(x^4 - 5x^2 + 4 = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">3.</span> <strong>Решите уравнение разложением на множители:</strong> \(x^3 - 4x = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">4.</span> <strong>Решите уравнение (равносильные преобразования, проверка ОДЗ):</strong> \(\sqrt{x + 1} = x - 1\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">5.</span> <strong>Решите неравенство методом интервалов:</strong> \((x - 1)(x + 3) > 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">6.</span> <strong>Решите уравнение (ОДЗ):</strong> \(\frac{x^2 - 4}{x - 2} = 0\)</div>
+            </div>
+        </div>
+
+        <!-- ВАРИАНТ 2 -->
+        <div id="variant-2" class="variant-content">
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">1.</span> <strong>Решите неравенство методом интервалов:</strong> \(\frac{x^2 - 1}{x + 3} \ge 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">2.</span> <strong>Решите уравнение заменой переменной:</strong> \(x^4 - 13x^2 + 36 = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">3.</span> <strong>Решите уравнение разложением на множители:</strong> \(x^3 - 9x = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">4.</span> <strong>Решите уравнение (равносильные преобразования, проверка ОДЗ):</strong> \(\sqrt{x + 2} = x\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">5.</span> <strong>Решите неравенство методом интервалов:</strong> \((x + 2)(x - 4) < 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">6.</span> <strong>Решите уравнение (ОДЗ):</strong> \(\frac{x^2 - 9}{x + 3} = 0\)</div>
+            </div>
+        </div>
+
+        <!-- ВАРИАНТ 3 -->
+        <div id="variant-3" class="variant-content">
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">1.</span> <strong>Решите неравенство методом интервалов:</strong> \(\frac{x^2 - 16}{x + 1} < 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">2.</span> <strong>Решите уравнение заменой переменной:</strong> \(x^4 - 10x^2 + 9 = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">3.</span> <strong>Решите уравнение разложением на множители:</strong> \(x^3 - x = 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">4.</span> <strong>Решите уравнение (равносильные преобразования, проверка ОДЗ):</strong> \(\sqrt{x + 6} = x\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">5.</span> <strong>Решите неравенство методом интервалов:</strong> \((x - 3)(x + 5) \ge 0\)</div>
+            </div>
+            <div class="task-item">
+                <div class="task-text"><span class="task-num">6.</span> <strong>Решите уравнение (ОДЗ):</strong> \(\frac{x^2 - 25}{x - 5} = 0\)</div>
+            </div>
+        </div>
+
+        <!-- ДОПОЛНИТЕЛЬНЫЕ ЗАДАНИЯ -->
+        <div class="extra-block" id="extraBlock">
+            <div class="extra-header" onclick="toggleExtra()">
+                <div class="extra-header-left">
+                    <span class="extra-icon">⭐</span>
+                    <span class="extra-title">Дополнительные задания</span>
+                    <span class="extra-badge">за доп. оценку</span>
+                </div>
+                <span class="extra-toggle">▼</span>
+            </div>
+            <div class="extra-body">
+                <div class="extra-hint">
+                    💡 Для тех, кто справился с основным вариантом раньше времени. Те же методы, но задания чуть сложнее.
+                </div>
+
+                <div class="task-item">
+                    <div class="task-text"><span class="task-num">Д1.</span> <strong>Решите неравенство методом интервалов:</strong> \(\frac{(x - 1)(x + 2)}{x - 3} \le 0\)</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-text"><span class="task-num">Д2.</span> <strong>Решите уравнение заменой переменной:</strong> \(x^4 - 7x^2 + 12 = 0\)</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-text"><span class="task-num">Д3.</span> <strong>Решите уравнение разложением на множители:</strong> \(x^3 - 2x^2 - x + 2 = 0\)</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-text"><span class="task-num">Д4.</span> <strong>Решите уравнение (равносильные преобразования):</strong> \(\sqrt{2x + 3} = x\)</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-text"><span class="task-num">Д5.</span> <strong>Решите уравнение (ОДЗ):</strong> \(\frac{x^2 - 4x + 3}{x - 1} = 0\)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Оверлей "Время вышло" -->
+<div class="time-over-overlay" id="timeOverOverlay">
+    <div class="time-over-card">
+        <div class="time-over-icon">⏰</div>
+        <div class="time-over-title">Время вышло</div>
+        <div class="time-over-subtitle">Зачёт завершён.<br>Сдайте работу преподавателю.</div>
+    </div>
+</div>
+
+<!-- Оверлей "Фокус потерян" -->
+<div class="time-over-overlay" id="focusLostOverlay">
+    <div class="time-over-card">
+        <div class="time-over-icon">🚫</div>
+        <div class="time-over-title">Зачёт прерван</div>
+        <div class="time-over-subtitle">Вы покинули страницу зачёта.<br>Работа завершена автоматически.<br>Сдайте её преподавателю.</div>
+    </div>
+</div>
+
+<!-- Экран "Зачёт завершён" -->
+<div id="closedScreen">
+    <div class="closed-card">
+        <div class="closed-icon">✅</div>
+        <div class="closed-title">Зачёт завершён</div>
+        <div class="closed-text">Эта работа уже сдана.<br>Повторный вход запрещён.<br>Обратитесь к преподавателю, если нужно пройти заново.</div>
+        <button class="closed-reset" onclick="resetForNewStudent()">Сбросить для нового студента</button>
+    </div>
+</div>
+
+<script>
+    function _runWhenReady(fn) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', fn);
+        } else {
+            fn();
+        }
+    }
+
+    const EXAM_STATE_KEY = 'eq_ineq_exam_state_v1';
+    const EXAM_CLOSED_KEY = 'eq_ineq_exam_closed';
+
+    function loadExamState() {
+        try {
+            const raw = localStorage.getItem(EXAM_STATE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+    function saveExamState(state) {
+        try { localStorage.setItem(EXAM_STATE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function clearExamState() {
+        try { localStorage.removeItem(EXAM_STATE_KEY); } catch (e) {}
+    }
+
+    const _saved = loadExamState();
+    const _closed = localStorage.getItem(EXAM_CLOSED_KEY) === '1';
+
+    let timeLeft = _saved && typeof _saved.timeLeft === 'number' ? _saved.timeLeft : 45 * 60;
+    let timerInterval = null;
+    let isRunning = !!(_saved && _saved.isRunning);
+    let currentVariant = (_saved && _saved.currentVariant) || 1;
+    let examFinished = !!(_saved && _saved.examFinished);
+    let startedAt = (_saved && _saved.startedAt) || null;
+
+    function formatTime(seconds) {
+        let m = Math.floor(seconds / 60);
+        let s = seconds % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function persistState() {
+        saveExamState({
+            isRunning: isRunning,
+            examFinished: examFinished,
+            timeLeft: timeLeft,
+            currentVariant: currentVariant,
+            startedAt: startedAt
+        });
+    }
+
+    function showClosedScreen() {
+        const el = document.getElementById('closedScreen');
+        if (el) el.classList.add('show');
+    }
+
+    function resetForNewStudent() {
+        const modal = document.createElement('div');
+        modal.id = 'resetModal';
+        modal.style.cssText = `
+            position: fixed; inset: 0; z-index: 10002;
+            background: rgba(26,42,63,0.55);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        `;
+        modal.innerHTML = `
+            <div style="background:#fff;border-radius:20px;padding:28px 32px;max-width:90vw;width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                <div style="font-size:2rem;margin-bottom:8px;">🔑</div>
+                <div style="font-weight:700;color:#1a2a3f;margin-bottom:12px;">Сброс для нового студента</div>
+                <input id="resetPwd" type="password" placeholder="Пароль преподавателя"
+                       style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:1rem;margin-bottom:12px;outline:none;">
+                <div id="resetError" style="color:#ef4444;font-size:0.85rem;margin-bottom:10px;display:none;">Неверный пароль</div>
+                <div style="display:flex;gap:10px;">
+                    <button id="resetCancel" style="flex:1;padding:10px;border:none;border-radius:20px;background:#cbd5e1;color:#475569;font-weight:600;cursor:pointer;">Отмена</button>
+                    <button id="resetOk" style="flex:1;padding:10px;border:none;border-radius:20px;background:#1abc9c;color:#fff;font-weight:600;cursor:pointer;">Сбросить</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const input = modal.querySelector('#resetPwd');
+        const errEl = modal.querySelector('#resetError');
+        input.focus();
+
+        function closeModal() {
+            if (modal.parentNode) modal.parentNode.removeChild(modal);
+        }
+        function tryReset() {
+            if (input.value === 'teacher2024') {
+                localStorage.removeItem(EXAM_STATE_KEY);
+                localStorage.removeItem(EXAM_CLOSED_KEY);
+                closeModal();
+                location.reload();
+            } else {
+                errEl.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        modal.querySelector('#resetCancel').addEventListener('click', closeModal);
+        modal.querySelector('#resetOk').addEventListener('click', tryReset);
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') tryReset();
+            if (e.key === 'Escape') closeModal();
+        });
+    }
+    window.resetForNewStudent = resetForNewStudent;
+
+    if (_closed) {
+        _runWhenReady(showClosedScreen);
+    }
+
+    function startTimer() {
+        if (isRunning || examFinished) return;
+        isRunning = true;
+        startedAt = Date.now();
+
+        const container = document.getElementById('mainContainer');
+        container.classList.remove('tasks-locked');
+
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = true);
+
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('startBtn').textContent = 'Зачёт идёт...';
+
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = formatTime(timeLeft);
+        persistState();
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = formatTime(timeLeft);
+
+            if (timeLeft % 5 === 0) persistState();
+
+            if (timeLeft <= 5 * 60) timerEl.classList.add('danger');
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerEl.textContent = "00:00";
+                document.getElementById('startBtn').textContent = 'Время вышло!';
+                endExam('time');
+            }
+        }, 1000);
+    }
+
+    function endExam(reason) {
+        if (examFinished) return;
+        examFinished = true;
+        isRunning = false;
+
+        localStorage.setItem(EXAM_CLOSED_KEY, '1');
+        clearExamState();
+
+        document.body.classList.add('blurred');
+
+        const overlay = reason === 'focus' 
+            ? document.getElementById('focusLostOverlay') 
+            : document.getElementById('timeOverOverlay');
+        overlay.classList.add('show');
+        overlay.style.pointerEvents = 'auto';
+
+        setTimeout(() => { try { window.close(); } catch (e) {} }, 8000);
+    }
+
+    function switchVariant(num) {
+        if (isRunning || examFinished) return;
+
+        currentVariant = num;
+
+        document.querySelectorAll('.variant-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+        document.getElementById('variant-' + num).classList.add('active');
+        document.querySelectorAll('.tab-btn')[num - 1].classList.add('active');
+
+        const chosen = document.getElementById('chosenVariant');
+        if (chosen) chosen.textContent = 'Выбран: Вариант ' + num;
+        persistState();
+    }
+
+    function toggleExtra() {
+        if (!isRunning || examFinished) return;
+        document.getElementById('extraBlock').classList.toggle('open');
+    }
+
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // ===== АВТОЗАВЕРШЕНИЕ ПРИ ПОТЕРЕ ФОКУСА =====
+    (function () {
+        let focusLost = false;
+
+        function handleFocusLoss() {
+            if (examFinished || !isRunning) return;
+            if (focusLost) return;
+            focusLost = true;
+            endExam('focus');
+        }
+
+        window.addEventListener('blur', handleFocusLoss);
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) handleFocusLoss();
+        });
+    })();
+
+    // ===== ВОССТАНОВЛЕНИЕ ПОСЛЕ ОБНОВЛЕНИЯ =====
+    (function restoreExamState() {
+        if (_closed) return;
+        if (!_saved) return;
+
+        if (_saved.examFinished) {
+            examFinished = true;
+            isRunning = false;
+            localStorage.setItem(EXAM_CLOSED_KEY, '1');
+            clearExamState();
+            _runWhenReady(showClosedScreen);
+            return;
+        }
+
+        if (_saved.isRunning) {
+            const elapsed = _saved.startedAt ? Math.floor((Date.now() - _saved.startedAt) / 1000) : 0;
+            const totalUsed = (45 * 60) - _saved.timeLeft + elapsed;
+            let remaining = Math.max(0, 45 * 60 - totalUsed);
+
+            if (remaining <= 0) {
+                timeLeft = 0;
+                examFinished = true;
+                isRunning = false;
+                localStorage.setItem(EXAM_CLOSED_KEY, '1');
+                clearExamState();
+                _runWhenReady(function () {
+                    document.getElementById('timer').textContent = '00:00';
+                    document.getElementById('startBtn').textContent = 'Время вышло!';
+                    document.getElementById('startBtn').disabled = true;
+                    document.body.classList.add('blurred');
+                    const overlay = document.getElementById('timeOverOverlay');
+                    overlay.classList.add('show');
+                    overlay.style.pointerEvents = 'auto';
+                });
+                return;
+            }
+
+            timeLeft = remaining;
+
+            _runWhenReady(function () {
+                const container = document.getElementById('mainContainer');
+                container.classList.remove('tasks-locked');
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = true);
+                const sb = document.getElementById('startBtn');
+                sb.disabled = true;
+                sb.textContent = 'Зачёт идёт...';
+
+                currentVariant = _saved.currentVariant || 1;
+                document.querySelectorAll('.variant-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                const v = document.getElementById('variant-' + currentVariant);
+                if (v) v.classList.add('active');
+                const tabs = document.querySelectorAll('.tab-btn');
+                if (tabs[currentVariant - 1]) tabs[currentVariant - 1].classList.add('active');
+                const chosen = document.getElementById('chosenVariant');
+                if (chosen) chosen.textContent = 'Выбран: Вариант ' + currentVariant;
+
+                const timerEl = document.getElementById('timer');
+                timerEl.textContent = formatTime(timeLeft);
+                if (timeLeft <= 5 * 60) timerEl.classList.add('danger');
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerEl.textContent = formatTime(timeLeft);
+                    if (timeLeft % 5 === 0) persistState();
+                    if (timeLeft <= 5 * 60) timerEl.classList.add('danger');
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerEl.textContent = '00:00';
+                        document.getElementById('startBtn').textContent = 'Время вышло!';
+                        endExam('time');
+                    }
+                }, 1000);
+            });
+        }
+    })();
+</script>
+</body>
+</html>
