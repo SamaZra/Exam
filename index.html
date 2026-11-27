@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Работы и зачёты — Математика</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a2a3f;
+            --text-secondary: #5a7a94;
+            --border: #e2e8f0;
+            --accent: #1abc9c;
+            --accent-dark: #16a085;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 3px solid var(--accent);
+        }
+        .header h1 {
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .section-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 16px 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-label::before {
+            content: "";
+            width: 6px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .work-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 26px 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            border-top: 5px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .work-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+        }
+        .work-card .card-icon {
+            font-size: 2.4rem;
+            margin-bottom: 14px;
+        }
+        .work-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+        .work-card .card-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 18px;
+            flex-grow: 1;
+        }
+        .work-card .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .meta-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #e8f0fe;
+            color: #2563eb;
+            white-space: nowrap;
+        }
+        .meta-tag.time { background: #fef3c7; color: #92400e; }
+        .meta-tag.tasks { background: #e0f2fe; color: #0369a1; }
+        .meta-tag.variants { background: #f3e8ff; color: #7c3aed; }
+        .work-card .card-btn {
+            display: inline-block;
+            text-align: center;
+            padding: 12px 22px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .work-card .card-btn:hover {
+            background: var(--accent-dark);
+            transform: scale(1.03);
+        }
+        .work-card .card-btn:active {
+            transform: scale(0.97);
+        }
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 24px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 2px dashed var(--border);
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            padding: 18px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        @media (max-width: 600px) {
+            body { padding: 14px; }
+            .header h1 { font-size: 1.5rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .work-card { padding: 22px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📚 Работы и зачёты</h1>
+        <p>Все проверочные работы по математике в одном месте.<br>
+        Выберите нужную работу, чтобы начать.</p>
+    </div>
+
+    <!-- ===== ЗАЧЁТЫ ===== -->
+    <div class="section-label">📝 Зачёты</div>
+    <div class="cards-grid">
+
+        <!-- ЗАЧЁТ ПО ТРИГОНОМЕТРИИ -->
+        <div class="work-card">
+            <div class="card-icon">📐</div>
+            <div class="card-title">Зачёт по тригонометрии</div>
+            <div class="card-desc">
+                Основные тождества, формулы приведения, двойной угол, сложение углов,
+                значения I четверти. Плюс дополнительные задания для сильных учеников.
+            </div>
+            <div class="card-meta">
+                <span class="meta-tag time">⏱ 30 мин</span>
+                <span class="meta-tag variants">5 вариантов</span>
+                <span class="meta-tag tasks">6 заданий</span>
+            </div>
+            <a class="card-btn" href="тригонометрия_формулы.html" target="_blank" rel="noopener">
+                Открыть зачёт →
+            </a>
+        </div>
+
+        <!-- ЗАЧЁТ ПО УРАВНЕНИЯМ И НЕРАВЕНСТВАМ -->
+        <div class="work-card">
+            <div class="card-icon">✏️</div>
+            <div class="card-title">Зачёт по уравнениям и неравенствам</div>
+            <div class="card-desc">
+                Метод интервалов, замена переменной, разложение на множители,
+                равносильные преобразования, ОДЗ. Плюс дополнительные задания.
+            </div>
+            <div class="card-meta">
+                <span class="meta-tag time">⏱ 45 мин</span>
+                <span class="meta-tag variants">3 варианта</span>
+                <span class="meta-tag tasks">6 заданий</span>
+            </div>
+            <a class="card-btn" href="exam-equations-inequalities.html" target="_blank" rel="noopener">
+                Открыть зачёт →
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ===== ПРОВЕРОЧНЫЕ РАБОТЫ (пока пусто) ===== -->
+    <div class="section-label">🧪 Проверочные работы</div>
+    <div class="cards-grid">
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            Проверочные работы появятся здесь позже.
+        </div>
+    </div>
+
+    <div class="footer-note">
+        ⚠️ Перед началом работы убедитесь, что у вас есть время до конца.<br>
+        Зачёт автоматически завершится, если вы покинете страницу или время истечёт.
+    </div>
+</div>
+
+</body>
+</html>
