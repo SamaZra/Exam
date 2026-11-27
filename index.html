@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Практические работы и зачёты — Математика</title>
+    <title>Работы и зачёты — Математика</title>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,7 +22,6 @@
             --menu-item-bg: #1e3545;
             --menu-item-hover: #233e50;
             --group-header-bg: #2c4a6e;
-            --card-shadow: rgba(0,0,0,0.25);
             --tag-bg: rgba(26, 188, 156, 0.14);
             --tag-color: #2dd4bf;
         }
@@ -41,7 +40,6 @@
             --menu-item-bg: white;
             --menu-item-hover: linear-gradient(95deg, #f8fafd, #ffffff);
             --group-header-bg: #e2e8f0;
-            --card-shadow: rgba(0,0,0,0.08);
             --tag-bg: rgba(13, 148, 136, 0.10);
             --tag-color: #0f766e;
         }
@@ -132,9 +130,13 @@
             border-radius: 14px; transition: all 0.3s ease;
         }
         .group-header:hover .group-icon {
-            background: var(--accent); color: white;
+            background: var(--accent);
             transform: scale(1.05) rotate(-5deg);
             box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+        }
+        .group-header:hover .group-icon > span {
+            color: #ffffff !important;
+            filter: brightness(0) invert(1) !important;
         }
 
         .group-content { flex: 1; }
@@ -146,70 +148,64 @@
         .submenu {
             max-height: 0; overflow: hidden;
             transition: max-height 0.5s ease;
+            background: var(--menu-item-bg);
         }
         .submenu.open { max-height: 4000px; }
 
-        /* ===== КАРТОЧКИ РАБОТ ===== */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 14px;
-            padding: 20px;
+        /* ===== СПИСКИ (как в эталоне) ===== */
+        .submenu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 22px 14px 52px;
+            border-bottom: 1px solid var(--border);
+            border-left: 1.5px solid transparent;
+            border-right: 1.5px solid transparent;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--menu-item-bg);
+            color: var(--text);
+        }
+        .submenu-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 6px 18px -8px rgba(59, 130, 246, 0.3);
+            transform: translateX(4px);
+        }
+        .submenu-item:last-child { border-bottom: none; }
+
+        .submenu-icon {
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 14px; font-size: 22px;
+            color: var(--icon-color); flex-shrink: 0;
+            background: transparent; border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+        .submenu-item:hover .submenu-icon {
+            transform: scale(1.15) rotate(-8deg);
+            text-shadow: 0 0 8px rgba(26, 188, 156, 0.6);
+            color: var(--accent);
         }
 
-        .work-card {
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 18px 18px 16px;
-            box-shadow: 0 6px 18px -8px var(--card-shadow);
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        .submenu-content { flex: 1; }
+        .submenu-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+        .submenu-desc { font-size: 0.7rem; color: var(--text-secondary); line-height: 1.3; }
+        
+        .submenu-arrow {
+            font-size: 20px; color: var(--text-secondary);
+            transition: all 0.2s ease; flex-shrink: 0;
         }
-        .work-card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0;
-            height: 4px; background: linear-gradient(90deg, var(--accent), #3b82f6);
+        .submenu-item:hover .submenu-arrow {
+            transform: translateX(5px); color: var(--accent);
         }
-        .work-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 32px -10px var(--card-shadow);
-            border-color: var(--accent);
-        }
-        .work-card .card-icon {
-            font-size: 1.8rem; margin-bottom: 10px;
-            width: 48px; height: 48px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--tag-bg);
-        }
-        .work-card .card-title { font-size: 1rem; font-weight: 800; margin-bottom: 8px; line-height: 1.35; }
-        .work-card .card-desc {
-            font-size: 0.82rem; color: var(--text-secondary);
-            line-height: 1.55; margin-bottom: 14px; flex-grow: 1;
-        }
-        .work-card .card-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-        .meta-tag {
-            font-size: 0.7rem; font-weight: 600;
-            padding: 3px 10px; border-radius: 20px;
+
+        /* Бейджи для зачётов */
+        .badge-group { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+        .badge {
+            font-size: 0.65rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 12px;
             background: var(--tag-bg); color: var(--tag-color);
             white-space: nowrap;
         }
-        .work-card .card-btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 10px 18px;
-            background: var(--accent); color: #fff;
-            text-decoration: none; font-weight: 700;
-            border-radius: 999px; font-size: 0.85rem;
-            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .work-card .card-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 22px -8px rgba(26,188,156,0.6);
-        }
-        .work-card .card-btn:active { transform: scale(0.98); }
 
         /* ===== НИЖНЯЯ НАВИГАЦИЯ ===== */
         .bottom-nav {
@@ -258,7 +254,8 @@
             .header h1 { font-size: 1.3rem; }
             .group-header { padding: 16px 20px; }
             .group-icon { width: 40px; height: 40px; font-size: 20px; margin-right: 12px; }
-            .cards-grid { grid-template-columns: 1fr; padding: 16px; gap: 12px; }
+            .submenu-item { padding: 14px 16px 14px 20px; }
+            .submenu-icon { width: 32px; height: 32px; font-size: 18px; margin-right: 10px; }
         }
         @media (prefers-reduced-motion: reduce) {
             body, .header, .menu-card { animation: none !important; }
@@ -286,28 +283,30 @@
                 <div class="group-arrow">›</div>
             </div>
             <div class="submenu">
-                <div class="cards-grid">
-                    <div class="work-card">
-                        <div class="card-icon">📐</div>
-                        <div class="card-title">Зачёт по тригонометрии</div>
-                        <div class="card-desc">Основные тождества, формулы приведения, двойной угол, сложение углов, значения I четверти. Плюс дополнительные задания.</div>
-                        <div class="card-meta">
-                            <span class="meta-tag">⏱ 30 мин</span>
-                            <span class="meta-tag">5 вариантов</span>
+                <a href="exam-trigonometry.html" class="submenu-item" target="_blank" rel="noopener">
+                    <div class="submenu-icon">📐</div>
+                    <div class="submenu-content">
+                        <div class="submenu-title">Зачёт по тригонометрии</div>
+                        <div class="submenu-desc">Тождества, формулы приведения, двойной угол, сложение углов</div>
+                        <div class="badge-group">
+                            <span class="badge">⏱ 30 мин</span>
+                            <span class="badge">5 вариантов</span>
                         </div>
-                        <a class="card-btn" href="exam-trigonometry.html" target="_blank" rel="noopener">Открыть зачёт →</a>
                     </div>
-                    <div class="work-card">
-                        <div class="card-icon">✏️</div>
-                        <div class="card-title">Зачёт по уравнениям и неравенствам</div>
-                        <div class="card-desc">Метод интервалов, замена переменной, разложение на множители, равносильные преобразования, ОДЗ. Плюс дополнительные задания.</div>
-                        <div class="card-meta">
-                            <span class="meta-tag">⏱ 45 мин</span>
-                            <span class="meta-tag">3 варианта</span>
+                    <div class="submenu-arrow">›</div>
+                </a>
+                <a href="exam-equations-inequalities.html" class="submenu-item" target="_blank" rel="noopener">
+                    <div class="submenu-icon">✏️</div>
+                    <div class="submenu-content">
+                        <div class="submenu-title">Зачёт по уравнениям и неравенствам</div>
+                        <div class="submenu-desc">Метод интервалов, замена переменной, разложение на множители</div>
+                        <div class="badge-group">
+                            <span class="badge">⏱ 45 мин</span>
+                            <span class="badge">3 варианта</span>
                         </div>
-                        <a class="card-btn" href="exam-equations-inequalities.html" target="_blank" rel="noopener">Открыть зачёт →</a>
                     </div>
-                </div>
+                    <div class="submenu-arrow">›</div>
+                </a>
             </div>
         </div>
 
@@ -321,10 +320,8 @@
                 </div>
                 <div class="group-arrow">›</div>
             </div>
-            <div class="submenu">
-                <div class="cards-grid" id="course1-grid">
-                    <!-- Генерируется скриптом -->
-                </div>
+            <div class="submenu" id="course1-menu">
+                <!-- Генерируется скриптом -->
             </div>
         </div>
 
@@ -338,10 +335,8 @@
                 </div>
                 <div class="group-arrow">›</div>
             </div>
-            <div class="submenu">
-                <div class="cards-grid" id="course2-grid">
-                    <!-- Генерируется скриптом -->
-                </div>
+            <div class="submenu" id="course2-menu">
+                <!-- Генерируется скриптом -->
             </div>
         </div>
 
@@ -413,9 +408,9 @@
     })();
 
     // ============================================================
-    // 2. ГЕНЕРАЦИЯ КАРТОЧЕК ПРАКТИЧЕСКИХ РАБОТ
+    // 2. ГЕНЕРАЦИЯ СПИСКОВ ПРАКТИЧЕСКИХ РАБОТ
     // ============================================================
-    function generateCards(containerId, count, prefix, courseLabel, icon) {
+    function generateList(containerId, count, prefix, courseLabel, icon) {
         var container = document.getElementById(containerId);
         if (!container) return;
         var html = '';
@@ -423,26 +418,24 @@
             var num = i < 10 ? '0' + i : i;
             var fileName = prefix + '-' + num + '.html';
             html += `
-                <div class="work-card">
-                    <div class="card-icon">${icon}</div>
-                    <div class="card-title">Практическая работа № ${i}</div>
-                    <div class="card-desc">${courseLabel} курс. Обобщённая тема практической работы.</div>
-                    <div class="card-meta">
-                        <span class="meta-tag">${courseLabel} курс</span>
-                        <span class="meta-tag">2 варианта</span>
+                <a href="${fileName}" class="submenu-item" target="_blank" rel="noopener">
+                    <div class="submenu-icon">${icon}</div>
+                    <div class="submenu-content">
+                        <div class="submenu-title">Практическая работа № ${i}</div>
+                        <div class="submenu-desc">${courseLabel} курс. Обобщённая тема практической работы.</div>
                     </div>
-                    <a class="card-btn" href="${fileName}" target="_blank" rel="noopener">Открыть →</a>
-                </div>
+                    <div class="submenu-arrow">›</div>
+                </a>
             `;
         }
         container.innerHTML = html;
     }
 
     // 1 курс: 10 работ
-    generateCards('course1-grid', 10, 'practice-1', '1', '📐');
+    generateList('course1-menu', 10, 'practice-1', '1', '📐');
     
     // 2 курс: 20 работ
-    generateCards('course2-grid', 20, 'practice-2', '2', '📘');
+    generateList('course2-menu', 20, 'practice-2', '2', '📘');
 
     // ============================================================
     // 3. ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ
@@ -485,7 +478,7 @@
     // 5. RIPPLE-ЭФФЕКТ
     // ============================================================
     function bindRipples() {
-        var sel = '.work-card .card-btn, .bottom-nav button, .group-header';
+        var sel = '.submenu-item, .bottom-nav button, .group-header';
         document.querySelectorAll(sel).forEach(function(el) {
             if (el.dataset.rippleBound) return;
             el.dataset.rippleBound = '1';
